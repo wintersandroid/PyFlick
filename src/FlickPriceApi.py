@@ -7,9 +7,9 @@ import json
 import time
 from calendar import timegm
 import requests
-from src.FlickAuth import FlickAuth
-from src import util
-from src import definitions
+from FlickAuth import FlickAuth
+import util
+import definitions
 
 
 class FlickPriceApi(object):
@@ -17,13 +17,14 @@ class FlickPriceApi(object):
 
     def __init__(self, username, password, client_id, client_secret):
         self.data = None
+        self.had_expired = False
         auth_instance = FlickAuth(username, password, client_id, client_secret)
         self.session = auth_instance.get_token()
         self.get_raw_data(True)
 
     def update(self, write_to_file=False):
         """ Pull Updates From Flick Servers"""
-
+        self.had_expired = True
         print("getting the latest price")
         headers = {
             "Authorization": "Bearer %s" % self.session["id_token"]
@@ -51,6 +52,9 @@ class FlickPriceApi(object):
         # print "%d" % nowEpoch
         return next_epoch < now_epoch
 
+    def price_had_expired(self):
+        return self.had_expired
+
     @staticmethod
     def get_update_time(update, is_epoch):
         """ Gets the prev/next update time """
@@ -65,9 +69,10 @@ class FlickPriceApi(object):
         self.data = util.get_json_file(definitions.FLICK_PRICE_DATA_STORE)
         if not self.data:
             self.data = self.update(write_to_file)
-        expired = self.price_expired()
-        if expired is True:
-            self.data = self.update(True)
+        else:
+          self.had_expired = self.price_expired()
+          if self.had_expired is True:
+              self.data = self.update(True)
         return self.data
 
     def get_price_per_kwh(self):

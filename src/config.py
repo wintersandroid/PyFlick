@@ -3,8 +3,8 @@
 Configuration Module
 """
 
-from src import definitions
-from src import util
+import definitions
+import util
 
 
 # noinspection PyMethodMayBeStatic

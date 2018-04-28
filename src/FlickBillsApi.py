@@ -7,9 +7,9 @@ import json
 import time
 from calendar import timegm
 import requests
-from src.FlickAuth import FlickAuth
-from src import util
-from src import definitions
+from FlickAuth import FlickAuth
+import util
+import definitions
 
 
 class FlickBillsApi(object):

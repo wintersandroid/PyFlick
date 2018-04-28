@@ -6,9 +6,9 @@ Authentication Module
 import json
 import time
 import requests
-from src import definitions
-from src.exceptionHandler import AuthException
-from src import util
+import definitions
+from exceptionHandler import AuthException
+import util
 
 
 class FlickAuth(object):

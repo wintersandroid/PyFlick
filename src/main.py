@@ -4,9 +4,9 @@
 Main Module
 """
 
-from src.FlickPriceApi import FlickPriceApi
-from src.FlickBillsApi import FlickBillsApi
-from src.config import Config
+from FlickPriceApi import FlickPriceApi
+from FlickBillsApi import FlickBillsApi
+from Config import Config
 
 
 def main():
