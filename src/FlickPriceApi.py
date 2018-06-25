@@ -81,15 +81,17 @@ class FlickPriceApi(object):
 
     def get_price_breakdown(self):
         """ Get the price, broken down into it's constituent parts"""
-        charges = 0.0
-        spot_price = 0.0
-        for item in self.data["needle"]["components"]:
-            if item["charge_method"] == "kwh":
-                charges += float(item["value"])
-            elif item["charge_method"] == "spot_price":
-                spot_price = float(item["value"])
+        charges = {}
 
-        return {"charges": charges, "spot_price": spot_price}
+        for item in self.data["needle"]["components"]:
+            value = float(item["value"])
+            if item["charge_method"] == "kwh":
+                if value != 0:
+                    charges[item["charge_setter"]] = value
+            elif item["charge_method"] == "spot_price":
+                charges["spot_price"] = value
+
+        return charges
 
     def get_last_update_time(self, is_epoch=False):
         return self.get_update_time(self.data["needle"]["start_at"], is_epoch)
