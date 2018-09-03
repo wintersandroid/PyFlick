@@ -59,7 +59,9 @@ class FlickPriceApi(object):
     def get_update_time(update, is_epoch):
         """ Gets the prev/next update time """
         if is_epoch is True:
-            utc_time = time.strptime(update, "%Y-%m-%dT%H:%M:%SZ")
+            update = update.replace(".000+", "+")
+            update = update.replace("+00:00", "")
+            utc_time = time.strptime(update, "%Y-%m-%dT%H:%M:%S")
             epoch = timegm(utc_time)
             return epoch
         return update
@@ -70,9 +72,9 @@ class FlickPriceApi(object):
         if not self.data:
             self.data = self.update(write_to_file)
         else:
-          self.had_expired = self.price_expired()
-          if self.had_expired is True:
-              self.data = self.update(True)
+            self.had_expired = self.price_expired()
+            if self.had_expired is True:
+                self.data = self.update(True)
         return self.data
 
     def get_price_per_kwh(self):
@@ -82,14 +84,14 @@ class FlickPriceApi(object):
     def get_price_breakdown(self):
         """ Get the price, broken down into it's constituent parts"""
         charges = {}
-
-        for item in self.data["needle"]["components"]:
-            value = float(item["value"])
-            if item["charge_method"] == "kwh":
-                if value != 0:
-                    charges[item["charge_setter"]] = value
-            elif item["charge_method"] == "spot_price":
-                charges["spot_price"] = value
+        if "needle" in self.data and "components" in self.data["needle"]:
+            for item in self.data["needle"]["components"]:
+                value = float(item["value"])
+                if item["charge_method"] == "kwh":
+                    if value != 0:
+                        charges[item["charge_setter"]] = value
+                elif item["charge_method"] == "spot_price":
+                    charges["spot_price"] = value
 
         return charges
 

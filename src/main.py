@@ -6,7 +6,7 @@ Main Module
 
 from FlickPriceApi import FlickPriceApi
 from FlickBillsApi import FlickBillsApi
-from Config import Config
+from config import Config
 
 
 def main():
