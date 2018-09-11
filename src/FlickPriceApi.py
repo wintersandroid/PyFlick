@@ -59,9 +59,12 @@ class FlickPriceApi(object):
     def get_update_time(update, is_epoch):
         """ Gets the prev/next update time """
         if is_epoch is True:
-            update = update.replace(".000+", "+")
-            update = update.replace("+00:00", "")
-            utc_time = time.strptime(update, "%Y-%m-%dT%H:%M:%S")
+            if 'Z' not in update:
+                update = update.replace(".000+", "+")
+                update = update.replace("+00:00", "")
+                utc_time = time.strptime(update, "%Y-%m-%dT%H:%M:%S")
+            else:
+                utc_time = time.strptime(update, "%Y-%m-%dT%H:%M:%SZ")
             epoch = timegm(utc_time)
             return epoch
         return update
